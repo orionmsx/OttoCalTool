@@ -19,48 +19,48 @@
 #define PIN_LH 2 // Left hip
 
 // MENU CONFIGURATION
-SUI_DeclareString(device_greeting, "+++ Welcome to the Otto's calibration tool +++\r\n+++ by Rafa López [rlopezverdejo@gmail.com] +++\r\nWrite ? for help.");
+SUI_DeclareString(device_greeting, "+++ Welcome to the Otto's calibration tool +++\r\n+++ by Rafael Lopez Verdejo [rlopezverdejo@gmail.com] +++\r\nWrite ? for help.");
 SUI_DeclareString(top_menu_title, "Main menu");
 
-SUI_DeclareString(ti_key, "ti");
-SUI_DeclareString(ti_help, "Ajuste del tobillo izquierdo");
-SUI_DeclareString(tiplus_key, "+");
-SUI_DeclareString(tiplus_help, "Ajuste positivo del tobillo izquierdo");
-SUI_DeclareString(timinus_key, "-");
-SUI_DeclareString(timinus_help, "Ajuste negativo del tobillo izquierdo");
+SUI_DeclareString(la_key, "la");
+SUI_DeclareString(la_help, "Left ankle trim");
+SUI_DeclareString(la_plus_key, "+");
+SUI_DeclareString(la_plus_help, "Left ankle trim +1");
+SUI_DeclareString(la_minus_key, "-");
+SUI_DeclareString(la_minus_help, "Left ankle trim -1");
 
-SUI_DeclareString(td_key, "td");
-SUI_DeclareString(td_help, "Ajuste del tobillo derecho");
-SUI_DeclareString(tdplus_key, "+");
-SUI_DeclareString(tdplus_help, "Ajuste positivo del tobillo derecho");
-SUI_DeclareString(tdminus_key, "-");
-SUI_DeclareString(tdminus_help, "Ajuste negativo del tobillo derecho");
+SUI_DeclareString(ra_key, "ra");
+SUI_DeclareString(ra_help, "Right ankle trim");
+SUI_DeclareString(ra_plus_key, "+");
+SUI_DeclareString(ra_plus_help, "Right ankle trim +1");
+SUI_DeclareString(ra_minus_key, "-");
+SUI_DeclareString(ra_minus_help, "Right ankle trim -1");
 
-SUI_DeclareString(ci_key, "ci");
-SUI_DeclareString(ci_help, "Ajuste de la cadera izquierda");
-SUI_DeclareString(ciplus_key, "+");
-SUI_DeclareString(ciplus_help, "Ajuste positivo de la cadera izquierda");
-SUI_DeclareString(ciminus_key, "-");
-SUI_DeclareString(ciminus_help, "Ajuste negativo de la cadera izquierda");
+SUI_DeclareString(lh_key, "lh");
+SUI_DeclareString(lh_help, "Left hip trim");
+SUI_DeclareString(lh_plus_key, "+");
+SUI_DeclareString(lh_plus_help, "Left hip trim +1");
+SUI_DeclareString(lh_minus_key, "-");
+SUI_DeclareString(lh_minus_help, "Left hip trim -1");
 
-SUI_DeclareString(cd_key, "cd");
-SUI_DeclareString(cd_help, "Ajuste de la cadera derecha");
-SUI_DeclareString(cdplus_key, "+");
-SUI_DeclareString(cdplus_help, "Ajuste positivo de la cadera derecha");
-SUI_DeclareString(cdminus_key, "-");
-SUI_DeclareString(cdminus_help, "Ajuste negativo de la cadera derecha");
+SUI_DeclareString(rh_key, "rh");
+SUI_DeclareString(rh_help, "Right hip trim");
+SUI_DeclareString(rh_plus_key, "+");
+SUI_DeclareString(rh_plus_help, "Right hip trim +1");
+SUI_DeclareString(rh_minus_key, "-");
+SUI_DeclareString(rh_minus_help, "Right hip trim -1");
 
 SUI_DeclareString(info_key, "info");
-SUI_DeclareString(info_help, "Muestra los valores de calibración en memoria");
+SUI_DeclareString(info_help, "Show the trim values loaded into memory");
 
 SUI_DeclareString(save_key, "save");
-SUI_DeclareString(save_help, "Guarda los valores de calibración en la EEPROM");
+SUI_DeclareString(save_help, "Save memory trim values to EEPROM");
 
 SUI_DeclareString(load_key, "load");
-SUI_DeclareString(load_help, "Carga los valores de calibración desde la EEPROM");
+SUI_DeclareString(load_help, "Load memory trim values from EEPROM");
 
 SUI_DeclareString(reset_key, "reset");
-SUI_DeclareString(reset_help, "Inicializa los valores de calibración en memoria");
+SUI_DeclareString(reset_help, "Reset memory trim values");
 
 SUI::SerialUI mySUI = SUI::SerialUI(device_greeting);
 
@@ -90,18 +90,18 @@ void setup()
 
   SUI::Menu * mainMenu = mySUI.topLevelMenu();
   mainMenu->setName(top_menu_title);
-  SUI::Menu * tiMenu = mainMenu->subMenu(ti_key, ti_help);
-  tiMenu->addCommand(tiplus_key, CB_leftAnklePlus, tiplus_help);
-  tiMenu->addCommand(timinus_key, CB_leftAnkleMinus, timinus_help);
-  SUI::Menu * tdMenu = mainMenu->subMenu(td_key, td_help);
-  tdMenu->addCommand(tdplus_key, CB_rightAnklePlus, tdplus_help);
-  tdMenu->addCommand(tdminus_key, CB_rightAnkleMinus, tdminus_help);
-  SUI::Menu * ciMenu = mainMenu->subMenu(ci_key, ci_help);
-  ciMenu->addCommand(ciplus_key, CB_leftHipPlus, ciplus_help);
-  ciMenu->addCommand(ciminus_key, CB_leftHipMinus, ciminus_help);
-  SUI::Menu * cdMenu = mainMenu->subMenu(cd_key, cd_help);
-  cdMenu->addCommand(cdplus_key, CB_rightHipPlus, cdplus_help);
-  cdMenu->addCommand(cdminus_key, CB_rightHipMinus, cdminus_help);
+  SUI::Menu * laMenu = mainMenu->subMenu(la_key, la_help);
+  laMenu->addCommand(la_plus_key, CB_leftAnklePlus, la_plus_help);
+  laMenu->addCommand(la_minus_key, CB_leftAnkleMinus, la_minus_help);
+  SUI::Menu * raMenu = mainMenu->subMenu(ra_key, ra_help);
+  raMenu->addCommand(ra_plus_key, CB_rightAnklePlus, ra_plus_help);
+  raMenu->addCommand(ra_minus_key, CB_rightAnkleMinus, ra_minus_help);
+  SUI::Menu * lhMenu = mainMenu->subMenu(lh_key, lh_help);
+  lhMenu->addCommand(lh_plus_key, CB_leftHipPlus, lh_plus_help);
+  lhMenu->addCommand(lh_minus_key, CB_leftHipMinus, lh_minus_help);
+  SUI::Menu * rhMenu = mainMenu->subMenu(rh_key, rh_help);
+  rhMenu->addCommand(rh_plus_key, CB_rightHipPlus, rh_plus_help);
+  rhMenu->addCommand(rh_minus_key, CB_rightHipMinus, rh_minus_help);
   mainMenu->addCommand(info_key, CB_info, info_help);
   mainMenu->addCommand(save_key, CB_save, save_help);
   mainMenu->addCommand(load_key, CB_load, load_help);
@@ -176,7 +176,7 @@ void CB_save()
   EEPROM.write(eepromBaseAddress + 2, cal_RH);
   EEPROM.write(eepromBaseAddress + 3, cal_LH);
 
-  mySUI.println("Calibración grabada");
+  mySUI.println("Trim values saved");
 }
 
 void CB_load()
@@ -243,13 +243,13 @@ void setServoTrim(int theServo, int theTrim)
 
 void showTrims()
 {
-  mySUI.print("Right ankle / Tobillo derecho: ");
+  mySUI.print("Right ankle: ");
   mySUI.println(cal_RA);
-  mySUI.print("Left ankle / Tobillo izquierdo: ");
+  mySUI.print("Left ankle: ");
   mySUI.println(cal_LA);
-  mySUI.print("Right hip / Cadera derecha: ");
+  mySUI.print("Right hip: ");
   mySUI.println(cal_RH);
-  mySUI.print("Left hip / Cadera izquierda: ");
+  mySUI.print("Left hip: ");
   mySUI.println(cal_LH);
 }
 
