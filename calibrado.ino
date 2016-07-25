@@ -71,6 +71,8 @@ int cal_LA = 0;
 int cal_RH = 0;
 int cal_LH = 0;
 
+int eepromBaseAddress = 0;
+
 void setup()
 {
   mySUI.begin(9600);
@@ -169,10 +171,10 @@ void CB_save()
 {
   // SAVE EEPROM VALUES
 
-  EEPROM.write(0, cal_RA);
-  EEPROM.write(1, cal_LA);
-  EEPROM.write(2, cal_RH);
-  EEPROM.write(3, cal_LH);
+  EEPROM.write(eepromBaseAddress + 0, cal_RA);
+  EEPROM.write(eepromBaseAddress + 1, cal_LA);
+  EEPROM.write(eepromBaseAddress + 2, cal_RH);
+  EEPROM.write(eepromBaseAddress + 3, cal_LH);
 
   mySUI.println("Calibración grabada");
 }
@@ -183,7 +185,7 @@ void CB_load()
 
   // LOAD EEPROM VALUES
 
-  for (int x = 0; x < N_SERVOS; x++)
+  for (int x = eepromBaseAddress; x < (eepromBaseAddress + N_SERVOS); x++)
   {
     trim = EEPROM.read(x);
     if (trim > 128) trim = trim - 256;
