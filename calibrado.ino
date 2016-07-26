@@ -13,10 +13,17 @@
 
 #define N_SERVOS 4 // # servos
 
-#define PIN_RA 5 // Right ankle
-#define PIN_LA 4 // Left ankle
-#define PIN_RH 3 // Right hip
-#define PIN_LH 2 // Left hip
+#define RA_ID 0 // Right ankle ID
+#define LA_ID 1 // Left ankle ID
+#define RH_ID 2 // Right hip ID
+#define LH_ID 3 // Left hip ID
+
+#define RA_PIN 5 // Right ankle PIN
+#define LA_PIN 4 // Left ankle PIN
+#define RH_PIN 3 // Right hip PIN
+#define LH_PIN 2 // Left hip PIN
+
+#define EEPROM_BASE_ADDRESS 0
 
 // MENU CONFIGURATION
 SUI_DeclareString(device_greeting, "+++ Welcome to the Otto's calibration tool +++\r\n+++ by Rafael Lopez Verdejo [rlopezverdejo@gmail.com] +++\r\nWrite ? for help.");
@@ -66,27 +73,15 @@ SUI::SerialUI mySUI = SUI::SerialUI(device_greeting);
 
 Oscillator servo[N_SERVOS];
 
-int cal_RA = 0;
-int cal_LA = 0;
-int cal_RH = 0;
-int cal_LH = 0;
-
-int eepromBaseAddress = 0;
-
 void setup()
 {
   mySUI.begin(9600);
   mySUI.setMaxIdleMs(60000);
 
-  servo[0].attach(PIN_RA);
-  servo[1].attach(PIN_LA);
-  servo[2].attach(PIN_RH);
-  servo[3].attach(PIN_LH);
-
-  servo[0].SetTrim(cal_RA);
-  servo[1].SetTrim(cal_LA);
-  servo[2].SetTrim(cal_RH);
-  servo[3].SetTrim(cal_LH);
+  servo[RA_ID].attach(RA_PIN);
+  servo[LA_ID].attach(LA_PIN);
+  servo[RH_ID].attach(RH_PIN);
+  servo[LH_ID].attach(LH_PIN);
 
   SUI::Menu * mainMenu = mySUI.topLevelMenu();
   mainMenu->setName(top_menu_title);
@@ -124,42 +119,42 @@ void loop()
 
 void CB_leftAnklePlus()
 {
-  setServoTrim(1, ++cal_LA);
+  servo[LA_ID].SetTrim(servo[LA_ID].getTrim()+1);
 }
 
 void CB_leftAnkleMinus()
 {
-  setServoTrim(1, --cal_LA);
+  servo[LA_ID].SetTrim(servo[LA_ID].getTrim()-1);
 }
 
 void CB_rightAnklePlus()
 {
-  setServoTrim(0, ++cal_RA);
+  servo[RA_ID].SetTrim(servo[RA_ID].getTrim()+1);
 }
 
 void CB_rightAnkleMinus()
 {
-  setServoTrim(0, --cal_RA);
+  servo[RA_ID].SetTrim(servo[RA_ID].getTrim()-1);
 }
 
 void CB_leftHipPlus()
 {
-  setServoTrim(3, ++cal_LH);
+  servo[LH_ID].SetTrim(servo[LH_ID].getTrim()+1);
 }
 
 void CB_leftHipMinus()
 {
-  setServoTrim(3, --cal_LH);
+  servo[LH_ID].SetTrim(servo[LH_ID].getTrim()-1);
 }
 
 void CB_rightHipPlus()
 {
-  setServoTrim(2, ++cal_RH);
+  servo[RH_ID].SetTrim(servo[RH_ID].getTrim()+1);
 }
 
 void CB_rightHipMinus()
 {
-  setServoTrim(2, --cal_RH);
+  servo[RH_ID].SetTrim(servo[RH_ID].getTrim()-1);
 }
 
 void CB_info()
@@ -171,10 +166,9 @@ void CB_save()
 {
   // SAVE EEPROM VALUES
 
-  EEPROM.write(eepromBaseAddress + 0, cal_RA);
-  EEPROM.write(eepromBaseAddress + 1, cal_LA);
-  EEPROM.write(eepromBaseAddress + 2, cal_RH);
-  EEPROM.write(eepromBaseAddress + 3, cal_LH);
+  for (int i = 0; i < N_SERVOS; i++) {
+    EEPROM.write(EEPROM_BASE_ADDRESS + i, servo[i].getTrim());
+  }
 
   mySUI.println("Trim values saved");
 }
@@ -185,23 +179,11 @@ void CB_load()
 
   // LOAD EEPROM VALUES
 
-  for (int x = eepromBaseAddress; x < (eepromBaseAddress + N_SERVOS); x++)
+  for (int i = 0; i < N_SERVOS; i++)
   {
-    trim = EEPROM.read(x);
+    trim = EEPROM.read(EEPROM_BASE_ADDRESS + i);
     if (trim > 128) trim = trim - 256;
-    if (x == 0) {
-      cal_RA = trim;
-    }
-    else if (x == 1) {
-      cal_LA = trim;
-    }
-    else if (x == 2) {
-      cal_RH = trim;
-    }
-    else if (x == 3) {
-      cal_LH = trim;
-    }
-    servo[x].SetTrim(trim);
+    servo[i].SetTrim(trim);
   }
 
   showTrims();
@@ -212,15 +194,10 @@ void CB_reset()
 {
   // RESET MEMORY VALUES
 
-  cal_RA = 0;
-  cal_LA = 0;
-  cal_RH = 0;
-  cal_LH = 0;
-
-  servo[0].SetTrim(cal_RA);
-  servo[1].SetTrim(cal_LA);
-  servo[2].SetTrim(cal_RH);
-  servo[3].SetTrim(cal_LH);
+  for (int i = 0; i < N_SERVOS; i++)
+  {
+    servo[i].SetTrim(0);
+  }
 
   showTrims();
   centerServos();
@@ -235,21 +212,15 @@ void centerServos()
   delay(200);
 }
 
-void setServoTrim(int theServo, int theTrim)
-{
-  servo[theServo].SetTrim(theTrim);
-  servo[theServo].SetPosition(90);
-}
-
 void showTrims()
 {
   mySUI.print("Right ankle: ");
-  mySUI.println(cal_RA);
+  mySUI.println(servo[RA_ID].getTrim());
   mySUI.print("Left ankle: ");
-  mySUI.println(cal_LA);
+  mySUI.println(servo[LA_ID].getTrim());
   mySUI.print("Right hip: ");
-  mySUI.println(cal_RH);
+  mySUI.println(servo[RH_ID].getTrim());
   mySUI.print("Left hip: ");
-  mySUI.println(cal_LH);
+  mySUI.println(servo[LH_ID].getTrim());
 }
 
